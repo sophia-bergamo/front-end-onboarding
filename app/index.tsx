@@ -1,16 +1,26 @@
-import { StyleSheet, TextInput , Text, TouchableOpacity} from 'react-native';
+import { StyleSheet, TextInput , Text, TouchableOpacity, View} from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
   return (
       <ThemedView style={styles.titleContainer}> 
-        <ThemedText type="title">Bem vindo(a) Taqtile!</ThemedText>
-        <TextInput style={styles.formInputs} placeholder="E-mail" />
-        <TextInput style={styles.formInputs} placeholder="Senha"/>
+        <ThemedText type="title">Login</ThemedText>
+
+       <View style={styles.inputContainer}>
+         <Text style={styles.label}>E-mail</Text>
+         <TextInput style={styles.formInputs} />
+       </View>
+
+       <View style={styles.inputContainer}>
+         <Text style={styles.label}>Senha</Text>
+         <TextInput style={styles.formInputs} />
+       </View>
+
         <TouchableOpacity style={styles.button}>
-        <Text style={styles.textButton}>Entrar</Text>
-      </TouchableOpacity>
+         <Text style={styles.textButton}>Entrar</Text>
+       </TouchableOpacity>
+
       </ThemedView>
   );
 }
@@ -22,16 +32,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   formInputs: {
-    borderColor: '#708090',
     borderRadius: 10,
-    width: '80%',
     padding: 15,
     borderWidth: 1,
-    marginTop: 30,
-    opacity: 0.7
+    borderColor: '#A9A9A9'
+  },
+   inputContainer: {
+    width: '80%',
+    marginBottom: 20,
   },
   button: {
-    backgroundColor: '#FFB6C1',
+    backgroundColor: '#40E0D0',
     margin: 25,
     padding: 15,
     width: '80%',
@@ -41,5 +52,9 @@ const styles = StyleSheet.create({
   textButton: {
     fontWeight: 'bold',
     fontSize: 15,
+  },
+  label: {
+    textAlign: 'left',
+    margin: 10,
   }
 });
