@@ -1,23 +1,42 @@
 import { StyleSheet, TextInput , Text, TouchableOpacity, View} from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from './components/ThemedText';
+import { ThemedView } from './components/ThemedView';
+import { useState } from 'react';
+import { validateEmail } from './validations/email-validation';
+import { validatePassword } from './validations/password-validation';
 
 export default function HomeScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+
+  const handleSubmit = () => {
+    const emailValidationError = validateEmail(email);
+    const passwordValidationError = validatePassword(password);
+
+    setEmailError(emailValidationError);
+    setPasswordError(passwordValidationError);
+  };
+
   return (
       <ThemedView style={styles.titleContainer}> 
         <ThemedText type="title">Login</ThemedText>
 
        <View style={styles.inputContainer}>
-         <Text style={styles.label}>E-mail</Text>
-         <TextInput style={styles.formInputs} />
+         <Text style={styles.label} >E-mail</Text>
+         <TextInput value={email} onChangeText={setEmail} style={styles.formInputs} />
+         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
        </View>
 
        <View style={styles.inputContainer}>
          <Text style={styles.label}>Senha</Text>
-         <TextInput style={styles.formInputs} />
+         <TextInput value={password} onChangeText={setPassword} style={styles.formInputs} />
+         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
        </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
          <Text style={styles.textButton}>Entrar</Text>
        </TouchableOpacity>
 
@@ -56,5 +75,9 @@ const styles = StyleSheet.create({
   label: {
     textAlign: 'left',
     margin: 10,
-  }
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 5,
+  },
 });
