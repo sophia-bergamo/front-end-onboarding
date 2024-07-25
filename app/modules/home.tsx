@@ -1,9 +1,9 @@
 import { StyleSheet, TextInput , Text, TouchableOpacity, View} from 'react-native';
-import { ThemedText } from './components/ThemedText';
-import { ThemedView } from './components/ThemedView';
 import { useState } from 'react';
-import { validateEmail } from './validations/email-validation';
-import { validatePassword } from './validations/password-validation';
+import { ThemedText } from '../components/ThemedText';
+import { ThemedView } from '../components/ThemedView';
+import { validateEmail } from '../validations/email-validation';
+import { validatePassword } from '../validations/password-validation';
 
 export default function HomeScreen() {
   const [email, setEmail] = useState('');
