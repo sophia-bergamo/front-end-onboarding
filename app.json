@@ -1,22 +1,13 @@
 {
   "expo": {
-    "name": "front-end-onboarding",
-    "slug": "front-end-onboarding",
+    "name": "FrontEndOnboarding",
+    "slug": "FrontEndOnboarding",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
-      }
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static"
     },
     "plugins": [
       "expo-router"
