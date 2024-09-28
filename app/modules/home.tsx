@@ -1,46 +1,77 @@
-import { StyleSheet, TextInput , Text, TouchableOpacity, View} from 'react-native';
+import { useMutation } from '@apollo/client';
 import { useState } from 'react';
+import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { ThemedText } from '../components/ThemedText';
 import { ThemedView } from '../components/ThemedView';
+import { LOGIN_MUTATION } from '../mutation/login';
 import { validateEmail } from '../validations/email-validation';
 import { validatePassword } from '../validations/password-validation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loginSucess, setLoginSucces] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [login] = useMutation(LOGIN_MUTATION);
 
+  const handleSubmit = async () => {
+    setLoginError('');
+    setLoginSucces('');
 
-  const handleSubmit = () => {
     const emailValidationError = validateEmail(email);
     const passwordValidationError = validatePassword(password);
 
     setEmailError(emailValidationError);
     setPasswordError(passwordValidationError);
+
+    if (!emailValidationError || !passwordValidationError) {
+      try {
+        const { data } = await login({
+          variables: {
+            data: {
+              email: email,
+              password: password,
+            },
+          },
+        });
+
+        const token = data.login.token;
+        await AsyncStorage.setItem('token', token);
+
+        setLoginSucces('Login realizado com sucesso!');
+      } catch (error: any) {
+        setLoginError(error.message);
+      }
+    }
   };
 
   return (
-      <ThemedView style={styles.titleContainer}> 
-        <ThemedText type="title">Login</ThemedText>
+    <ThemedView style={styles.titleContainer}>
+      <ThemedText type="title">Login</ThemedText>
 
-       <View style={styles.inputContainer}>
-         <Text style={styles.label} >E-mail</Text>
-         <TextInput value={email} onChangeText={setEmail} style={styles.formInputs} />
-         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-       </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>E-mail</Text>
+        <TextInput value={email} onChangeText={setEmail} style={styles.formInputs} />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+      </View>
 
-       <View style={styles.inputContainer}>
-         <Text style={styles.label}>Senha</Text>
-         <TextInput value={password} onChangeText={setPassword} style={styles.formInputs} />
-         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-       </View>
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Senha</Text>
+        <TextInput value={password} onChangeText={setPassword} style={styles.formInputs} />
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+      </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-         <Text style={styles.textButton}>Entrar</Text>
-       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.textButton}>Entrar</Text>
+      </TouchableOpacity>
 
-      </ThemedView>
+      {loginSucess ? <Text style={styles.loginSucces}>{loginSucess}</Text> : null}
+
+      {loginError ? <Text style={styles.loginError}>{loginError}</Text> : null}
+    </ThemedView>
   );
 }
 
@@ -54,9 +85,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: '#A9A9A9'
+    borderColor: '#A9A9A9',
   },
-   inputContainer: {
+  inputContainer: {
     width: '80%',
     marginBottom: 20,
   },
@@ -66,7 +97,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '80%',
     borderRadius: 15,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   textButton: {
     fontWeight: 'bold',
@@ -79,5 +110,13 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 5,
+  },
+  loginSucces: {
+    color: 'green',
+    marginTop: 10,
+  },
+  loginError: {
+    color: 'red',
+    marginTop: 10,
   },
 });
