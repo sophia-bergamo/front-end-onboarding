@@ -1,27 +1,19 @@
-import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { ThemedText } from '../components/ThemedText';
 import { ThemedView } from '../components/ThemedView';
-import { LOGIN_MUTATION } from '../mutation/login';
 import { validateEmail } from '../validations/email-validation';
 import { validatePassword } from '../validations/password-validation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { loginMutation } from '../domain/login.use-case';
 
 export default function HomeScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [loginSucess, setLoginSucces] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [login] = useMutation(LOGIN_MUTATION);
-  const [loading, setLoading] = useState(false);
+  const { executeLogin, loading, loginSuccess, loginError } = loginMutation();
 
   const handleSubmit = async () => {
-    setLoginError('');
-    setLoginSucces('');
-
     const emailValidationError = validateEmail(email);
     const passwordValidationError = validatePassword(password);
 
@@ -29,26 +21,7 @@ export default function HomeScreen() {
     setPasswordError(passwordValidationError);
 
     if (!emailValidationError || !passwordValidationError) {
-      setLoading(true);
-      try {
-        const { data } = await login({
-          variables: {
-            data: {
-              email: email,
-              password: password,
-            },
-          },
-        });
-
-        const token = data.login.token;
-        await AsyncStorage.setItem('token', token);
-
-        setLoginSucces('Login realizado com sucesso!');
-      } catch (error: any) {
-        setLoginError(error.message);
-      } finally {
-        setLoading(false);
-      }
+      await executeLogin({ email, password });
     }
   };
 
@@ -76,7 +49,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       )}
 
-      {loginSucess ? <Text style={styles.loginSucces}>{loginSucess}</Text> : null}
+      {loginSuccess ? <Text style={styles.loginSucces}>{loginSuccess}</Text> : null}
 
       {loginError ? <Text style={styles.loginError}>{loginError}</Text> : null}
     </ThemedView>

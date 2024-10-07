@@ -9,7 +9,7 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <HomeScreen></HomeScreen>
+      <HomeScreen />
     </ApolloProvider>
   );
 }
